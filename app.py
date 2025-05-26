@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+import pandas as pd
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
@@ -8,6 +9,7 @@ st.title("🎓 Prediksi Kelayakan Beasiswa (Fuzzy Mamdani)")
 
 # Input Data Manual
 with st.form("form_input"):
+    nama = st.text_input("Nama Siswa")
     ipk = st.number_input("IPK (0.0 - 4.0)", min_value=0.0, max_value=4.0, step=0.01, value=3.5)
     aktif = st.selectbox("Aktif Organisasi?", ["Ya", "Tidak"])
     ekonomi = st.selectbox("Kondisi Ekonomi", ["Lemah", "Cukup"])
@@ -72,6 +74,15 @@ if submit:
     else:
         hasil = "Tidak Layak"
 
-    # Output
+    # Tampilkan dalam tabel
+    df = pd.DataFrame([{
+        "Nama Siswa": nama,
+        "IPK": ipk,
+        "Aktif Organisasi": aktif,
+        "Ekonomi": ekonomi,
+        "Nilai Fuzzy": round(nilai_output, 2),
+        "Status": hasil
+    }])
+
     st.subheader("📋 Hasil Prediksi")
-    st.success(f"Status: **{hasil}** (nilai fuzzy: {nilai_output:.2f})")
+    st.table(df)
